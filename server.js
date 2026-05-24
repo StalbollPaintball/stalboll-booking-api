@@ -24,10 +24,12 @@ CREATE TABLE IF NOT EXISTS bookings (
 const ADMIN_PASSWORD = "hemligt123";
 
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
   auth: {
-    user: "info.stalboll@gmail.com",
-    pass: "ydkmaptjapthundu"
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
   }
 });
 
