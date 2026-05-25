@@ -114,37 +114,47 @@ app.post("/book", (req, res) => {
         console.log("✅ Sparad:", name, playerCount, pkg);
 
         // 📧 MAIL KUND
-        transporter.sendMail({
-          from: "info.stalboll@gmail.com",
-          to: email,
-          subject: "Bokning bekräftad",
-          text: `Din bokning är klar!
+        console.log("📨 Försöker skicka kundmail...");
+
+transporter.sendMail({
+  from: "info.stalboll@gmail.com",
+  to: email,
+  subject: "Bokning bekräftad",
+  text: `Din bokning är klar!
 Datum: ${date}
 Tid: ${time}:00
 Deltagare: ${playerCount}
 Paket: ${pkg}`
-        }, (err, info) => {
-          console.log("KUND MAIL:", err || info.response);
-        });
+}, (err, info) => {
+  if (err) {
+    console.log("❌ KUND MAIL ERROR:");
+    console.log(err);
+  } else {
+    console.log("✅ KUND MAIL SENT:");
+    console.log(info.response);
+  }
+});
 
         // 📧 MAIL ADMIN
-        transporter.sendMail({
-          from: "info.stalboll@gmail.com",
-          to: "info.stalboll@gmail.com",
-          subject: "Ny bokning",
-          text: `${name} bokade:
+        console.log("📨 Försöker skicka adminmail...");
+
+transporter.sendMail({
+  from: "info.stalboll@gmail.com",
+  to: "info.stalboll@gmail.com",
+  subject: "Ny bokning",
+  text: `${name} bokade:
 Datum: ${date}
 Tid: ${time}:00
 Deltagare: ${playerCount}
 Paket: ${pkg}`
-        }, (err, info) => {
-          console.log("ADMIN MAIL:", err || info.response);
-        });
-
-        res.json({ message: "Bokning klar!" });
-      }
-    );
-  });
+}, (err, info) => {
+  if (err) {
+    console.log("❌ ADMIN MAIL ERROR:");
+    console.log(err);
+  } else {
+    console.log("✅ ADMIN MAIL SENT:");
+    console.log(info.response);
+  }
 });
 
 // 🔐 admin
