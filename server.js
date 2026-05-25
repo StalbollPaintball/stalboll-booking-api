@@ -75,13 +75,11 @@ app.get("/availability/:date", (req, res) => {
 app.post("/book", (req, res) => {
   let { name, email, date, time, players, package: pkg } = req.body;
 
-  // 🛡 fallback så inget kraschar
   if (!time) time = "";
   time = time.replace(":00", "");
 
   const playerCount = parseInt(players);
 
-  // ✅ validering
   if (!name || !email || !date || !time || !players || !pkg) {
     return res.status(400).json({ message: "Fyll i alla fält!" });
   }
@@ -116,45 +114,51 @@ app.post("/book", (req, res) => {
         // 📧 MAIL KUND
         console.log("📨 Försöker skicka kundmail...");
 
-transporter.sendMail({
-  from: "info.stalboll@gmail.com",
-  to: email,
-  subject: "Bokning bekräftad",
-  text: `Din bokning är klar!
+        transporter.sendMail({
+          from: "info.stalboll@gmail.com",
+          to: email,
+          subject: "Bokning bekräftad",
+          text: `Din bokning är klar!
 Datum: ${date}
 Tid: ${time}:00
 Deltagare: ${playerCount}
 Paket: ${pkg}`
-}, (err, info) => {
-  if (err) {
-    console.log("❌ KUND MAIL ERROR:");
-    console.log(err);
-  } else {
-    console.log("✅ KUND MAIL SENT:");
-    console.log(info.response);
-  }
-});
+        }, (err, info) => {
+          if (err) {
+            console.log("❌ KUND MAIL ERROR:");
+            console.log(err);
+          } else {
+            console.log("✅ KUND MAIL SENT:");
+            console.log(info.response);
+          }
+        });
 
         // 📧 MAIL ADMIN
         console.log("📨 Försöker skicka adminmail...");
 
-transporter.sendMail({
-  from: "info.stalboll@gmail.com",
-  to: "info.stalboll@gmail.com",
-  subject: "Ny bokning",
-  text: `${name} bokade:
+        transporter.sendMail({
+          from: "info.stalboll@gmail.com",
+          to: "info.stalboll@gmail.com",
+          subject: "Ny bokning",
+          text: `${name} bokade:
 Datum: ${date}
 Tid: ${time}:00
 Deltagare: ${playerCount}
 Paket: ${pkg}`
-}, (err, info) => {
-  if (err) {
-    console.log("❌ ADMIN MAIL ERROR:");
-    console.log(err);
-  } else {
-    console.log("✅ ADMIN MAIL SENT:");
-    console.log(info.response);
-  }
+        }, (err, info) => {
+          if (err) {
+            console.log("❌ ADMIN MAIL ERROR:");
+            console.log(err);
+          } else {
+            console.log("✅ ADMIN MAIL SENT:");
+            console.log(info.response);
+          }
+        });
+
+        res.json({ message: "Bokning klar!" });
+      }
+    );
+  });
 });
 
 // 🔐 admin
@@ -170,4 +174,8 @@ app.get("/admin/bookings", (req, res) => {
   });
 });
 
-app.listen(3000, () => console.log("Kör på http://localhost:3000"));
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log("Server kör på port " + PORT);
+});
