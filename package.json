@@ -11,9 +11,9 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "cors": "^2.8.6",
-    "express": "^5.2.1",
-    "nodemailer": "^8.0.8",
-    "sqlite3": "5.1.6"
-  }
+  "cors": "^2.8.6",
+  "express": "^5.2.1",
+  "sqlite3": "5.1.6",
+  "resend": "^4.0.0"
+}
 }
