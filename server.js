@@ -107,7 +107,7 @@ app.post("/book", async (req, res) => {
           console.log("📨 Skickar kundmail...");
 
           await resend.emails.send({
-            from: "Stålboll <onboarding@resend.dev>",
+            from: "Stålboll <bokning@stalboll.se>",
             to: email,
             subject: "Bokning bekräftad",
             text: `Din bokning är klar!
@@ -122,7 +122,7 @@ Paket: ${pkg}`
           console.log("📨 Skickar adminmail...");
 
           await resend.emails.send({
-            from: "Stålboll <onboarding@resend.dev>",
+            from: "Stålboll <bokning@stalboll.se>",
             to: "info.stalboll@gmail.com",
             subject: "Ny bokning",
             text: `${name} bokade:
