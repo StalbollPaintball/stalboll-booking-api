@@ -122,9 +122,13 @@ Tid: ${time}:00
 Deltagare: ${playerCount}
 Paket: ${pkg}
 
-Kundens mail: ${email}
+----------------------------
 
-👉 OBS: Om svar går fel, svara manuellt till: ${email}`
+📧 KUNDENS MAIL:
+${email}
+
+👉 Klicka här för att svara:
+mailto:${email}`
 });
 
           console.log("✅ MAIL SKICKAT TILL FÖRETAG");
