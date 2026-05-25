@@ -19,7 +19,9 @@ CREATE TABLE IF NOT EXISTS bookings (
   date TEXT,
   time TEXT,
   players TEXT,
-  package TEXT
+  package TEXT,
+  bookingType TEXT,
+  ageCheck TEXT
 )
 `);
 
@@ -63,7 +65,7 @@ app.get("/availability/:date", (req, res) => {
 });
 
 app.post("/book", async (req, res) => {
-  let { name, email, date, time, players, package: pkg } = req.body;
+  let { name, email, date, time, players, package: pkg, bookingType, ageCheck } = req.body;
 
   if (!time) time = "";
   time = time.replace(":00", "");
@@ -90,8 +92,8 @@ app.post("/book", async (req, res) => {
     if (!ok) return res.status(400).json({ message: "Fullbokat / ej tillgängligt" });
 
     db.run(
-      "INSERT INTO bookings (name, email, date, time, players, package) VALUES (?, ?, ?, ?, ?, ?)",
-      [name, email, date, time, playerCount, pkg],
+      "INSERT INTO bookings (name, email, date, time, players, package, bookingType, ageCheck) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+      [name, email, date, time, playerCount, pkg, bookingType, ageCheck],
       async (err) => {
 
         if (err) {
@@ -121,6 +123,8 @@ Datum: ${date}
 Tid: ${time}:00
 Deltagare: ${playerCount}
 Paket: ${pkg}
+Typ av bokning: ${bookingType}
+Alla över 18: ${ageCheck}
 
 ----------------------------
 
