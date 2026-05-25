@@ -105,17 +105,17 @@ app.post("/book", async (req, res) => {
           console.log("📨 Skickar bokning till företag...");
 
           await resend.emails.send({
-            from: "Stålboll <onboarding@resend.dev>",
+  from: "Stålboll <onboarding@resend.dev>",
+  to: "info.stalboll@gmail.com",
 
-            // 🔥 ALLT kommer till dig
-            to: "info.stalboll@gmail.com",
+  // 🔥 VIKTIG FIX
+  headers: {
+    "Reply-To": email
+  },
 
-            // 👇 svar går direkt till kunden
-            replyto: email,
+  subject: "Ny bokning - Stålboll Paintball",
 
-            subject: "Ny bokning - Stålboll Paintball",
-
-            text: `${name} har gjort en bokning:
+  text: `${name} har gjort en bokning:
 
 Datum: ${date}
 Tid: ${time}:00
@@ -124,8 +124,8 @@ Paket: ${pkg}
 
 Kundens mail: ${email}
 
-👉 Svara direkt på detta mail för att kontakta kunden`
-          });
+👉 OBS: Om svar går fel, svara manuellt till: ${email}`
+});
 
           console.log("✅ MAIL SKICKAT TILL FÖRETAG");
 
