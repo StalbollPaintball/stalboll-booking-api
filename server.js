@@ -35,14 +35,12 @@ function isAvailable(date, time, callback) {
   if (!allowedTimes.includes(time)) return callback(false);
 
   db.all("SELECT * FROM bookings WHERE date = ?", [date], (err, rows) => {
-
     if (err) {
       console.log("DB ERROR:", err);
       return callback(false);
     }
 
     if (!rows) return callback(false);
-
     if (rows.length >= 2) return callback(false);
 
     for (let b of rows) {
@@ -104,43 +102,32 @@ app.post("/book", async (req, res) => {
         console.log("✅ Sparad:", name, playerCount, pkg);
 
         try {
-          console.log("📨 Skickar kundmail (TEST)...");
+          console.log("📨 Skickar bokning till företag...");
 
-          // 🔥 TEST: skickas till dig istället
           await resend.emails.send({
-            from: "Stålboll <bokning@send.stalboll.se>",
+            from: "Stålboll <onboarding@resend.dev>",
+
+            // 🔥 ALLT kommer till dig
             to: "info.stalboll@gmail.com",
+
+            // 👇 svar går direkt till kunden
             reply_to: email,
-            subject: "TEST KUNDMAIL - Stålboll",
-            text: `Testbokning:
 
-Namn: ${name}
-Email: ${email}
-Datum: ${date}
-Tid: ${time}:00
-Deltagare: ${playerCount}
-Paket: ${pkg}`
-          });
+            subject: "Ny bokning - Stålboll Paintball",
 
-          console.log("✅ KUND MAIL SENT");
-
-          console.log("📨 Skickar adminmail...");
-
-          await resend.emails.send({
-            from: "Stålboll <bokning@send.stalboll.se>",
-            to: "info.stalboll@gmail.com",
-            subject: "Ny bokning - Stålboll",
-            text: `${name} bokade:
+            text: `${name} har gjort en bokning:
 
 Datum: ${date}
 Tid: ${time}:00
 Deltagare: ${playerCount}
 Paket: ${pkg}
 
-Kundens mail: ${email}`
+Kundens mail: ${email}
+
+👉 Svara direkt på detta mail för att kontakta kunden`
           });
 
-          console.log("✅ ADMIN MAIL SENT");
+          console.log("✅ MAIL SKICKAT TILL FÖRETAG");
 
         } catch (error) {
           console.log("❌ MAIL ERROR:");
