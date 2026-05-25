@@ -107,15 +107,16 @@ app.post("/book", async (req, res) => {
           console.log("📨 Skickar kundmail...");
 
           await resend.emails.send({
-            from: "Stålboll <onboarding@resend.dev>",
-            to: email,
-            subject: "Bokning bekräftad",
-            text: `Din bokning är klar!
+  from: "Stålboll <bokning@send.stalboll.se>",
+  to: email,
+  reply_to: "info.stalboll@gmail.com",
+  subject: "Bokning bekräftad",
+  text: `Din bokning är klar!
 Datum: ${date}
 Tid: ${time}:00
 Deltagare: ${playerCount}
 Paket: ${pkg}`
-          });
+});
 
           console.log("✅ KUND MAIL SENT");
 
