@@ -111,7 +111,7 @@ app.post("/book", async (req, res) => {
             to: "info.stalboll@gmail.com",
 
             // 👇 svar går direkt till kunden
-            reply_to: email,
+            replyto: email,
 
             subject: "Ny bokning - Stålboll Paintball",
 
