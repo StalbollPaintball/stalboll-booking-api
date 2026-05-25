@@ -1,11 +1,13 @@
 const express = require("express");
 const sqlite3 = require("sqlite3").verbose();
-const nodemailer = require("nodemailer");
 const cors = require("cors");
+const { Resend } = require("resend");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const db = new sqlite3.Database("./bookings.db");
 
@@ -22,16 +24,6 @@ CREATE TABLE IF NOT EXISTS bookings (
 `);
 
 const ADMIN_PASSWORD = "hemligt123";
-
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
-});
 
 const allowedTimes = ["10","11","12","13","14","15","16","17","18"];
 const blockedDays = [1];
@@ -72,7 +64,7 @@ app.get("/availability/:date", (req, res) => {
   });
 });
 
-app.post("/book", (req, res) => {
+app.post("/book", async (req, res) => {
   let { name, email, date, time, players, package: pkg } = req.body;
 
   if (!time) time = "";
@@ -102,7 +94,7 @@ app.post("/book", (req, res) => {
     db.run(
       "INSERT INTO bookings (name, email, date, time, players, package) VALUES (?, ?, ?, ?, ?, ?)",
       [name, email, date, time, playerCount, pkg],
-      (err) => {
+      async (err) => {
 
         if (err) {
           console.log("INSERT ERROR:", err);
@@ -111,49 +103,41 @@ app.post("/book", (req, res) => {
 
         console.log("✅ Sparad:", name, playerCount, pkg);
 
-        // 📧 MAIL KUND
-        console.log("📨 Försöker skicka kundmail...");
+        try {
+          console.log("📨 Skickar kundmail...");
 
-        transporter.sendMail({
-          from: "info.stalboll@gmail.com",
-          to: email,
-          subject: "Bokning bekräftad",
-          text: `Din bokning är klar!
+          await resend.emails.send({
+            from: "Stålboll <onboarding@resend.dev>",
+            to: email,
+            subject: "Bokning bekräftad",
+            text: `Din bokning är klar!
 Datum: ${date}
 Tid: ${time}:00
 Deltagare: ${playerCount}
 Paket: ${pkg}`
-        }, (err, info) => {
-          if (err) {
-            console.log("❌ KUND MAIL ERROR:");
-            console.log(err);
-          } else {
-            console.log("✅ KUND MAIL SENT:");
-            console.log(info.response);
-          }
-        });
+          });
 
-        // 📧 MAIL ADMIN
-        console.log("📨 Försöker skicka adminmail...");
+          console.log("✅ KUND MAIL SENT");
 
-        transporter.sendMail({
-          from: "info.stalboll@gmail.com",
-          to: "info.stalboll@gmail.com",
-          subject: "Ny bokning",
-          text: `${name} bokade:
+          console.log("📨 Skickar adminmail...");
+
+          await resend.emails.send({
+            from: "Stålboll <onboarding@resend.dev>",
+            to: "info.stalboll@gmail.com",
+            subject: "Ny bokning",
+            text: `${name} bokade:
 Datum: ${date}
 Tid: ${time}:00
 Deltagare: ${playerCount}
 Paket: ${pkg}`
-        }, (err, info) => {
-          if (err) {
-            console.log("❌ ADMIN MAIL ERROR:");
-            console.log(err);
-          } else {
-            console.log("✅ ADMIN MAIL SENT:");
-            console.log(info.response);
-          }
-        });
+          });
+
+          console.log("✅ ADMIN MAIL SENT");
+
+        } catch (error) {
+          console.log("❌ MAIL ERROR:");
+          console.log(error);
+        }
 
         res.json({ message: "Bokning klar!" });
       }
