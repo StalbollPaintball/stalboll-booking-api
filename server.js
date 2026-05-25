@@ -104,33 +104,40 @@ app.post("/book", async (req, res) => {
         console.log("✅ Sparad:", name, playerCount, pkg);
 
         try {
-          console.log("📨 Skickar kundmail...");
+          console.log("📨 Skickar kundmail (TEST)...");
 
+          // 🔥 TEST: skickas till dig istället
           await resend.emails.send({
-  from: "Stålboll <bokning@send.stalboll.se>",
-  to: email,
-  reply_to: "info.stalboll@gmail.com",
-  subject: "Bokning bekräftad",
-  text: `Din bokning är klar!
+            from: "Stålboll <bokning@send.stalboll.se>",
+            to: "info.stalboll@gmail.com",
+            reply_to: email,
+            subject: "TEST KUNDMAIL - Stålboll",
+            text: `Testbokning:
+
+Namn: ${name}
+Email: ${email}
 Datum: ${date}
 Tid: ${time}:00
 Deltagare: ${playerCount}
 Paket: ${pkg}`
-});
+          });
 
           console.log("✅ KUND MAIL SENT");
 
           console.log("📨 Skickar adminmail...");
 
           await resend.emails.send({
-            from: "Stålboll <onboarding@resend.dev>",
+            from: "Stålboll <bokning@send.stalboll.se>",
             to: "info.stalboll@gmail.com",
-            subject: "Ny bokning",
+            subject: "Ny bokning - Stålboll",
             text: `${name} bokade:
+
 Datum: ${date}
 Tid: ${time}:00
 Deltagare: ${playerCount}
-Paket: ${pkg}`
+Paket: ${pkg}
+
+Kundens mail: ${email}`
           });
 
           console.log("✅ ADMIN MAIL SENT");
