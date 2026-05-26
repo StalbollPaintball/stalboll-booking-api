@@ -49,7 +49,7 @@ function isAvailable(date, time, callback) {
       let existing = parseInt(b.time);
       let requested = parseInt(time);
 
-      if (Math.abs(existing - requested) < 2) {
+      if (Math.abs(existing - requested) < 3) {
         return callback(false);
       }
     }
