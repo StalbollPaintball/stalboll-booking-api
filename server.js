@@ -60,10 +60,11 @@ function isAvailable(date, time, callback) {
 
 app.get("/availability/:date", (req, res) => {
   db.all("SELECT time FROM bookings WHERE date = ?", [req.params.date], (err, rows) => {
-    res.json(rows.map(r => r.time));
+  res.json({
+    times: rows.map(r => r.time),
+    full: rows.length >= 2
   });
 });
-
 app.post("/book", async (req, res) => {
   let { name, email, date, time, players, package: pkg, bookingType, ageCheck } = req.body;
 
